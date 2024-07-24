@@ -17,7 +17,7 @@ def generate_treasury_budget(historical_data, assumptions, months):
     
     client = anthropic.Anthropic(api_key=st.secrets["API_CLAUDE"])
     message = client.messages.create(
-        model="claude-3-sonnet-20240229",
+        model="claude-3-5-sonnet-20240620",
         max_tokens=4096,
         temperature=0.7,
         system="Sei un esperto finanziario specializzato nella creazione di budget di tesoreria.",
