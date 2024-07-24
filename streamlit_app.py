@@ -12,7 +12,7 @@ def generate_treasury_budget(historical_data, assumptions, months):
     {assumptions}
     
     Genera una proiezione del budget di tesoreria per i prossimi {months} mesi.
-    Fornisci l'output in formato markdown con una tabella che visualizza il budget di tesoreria mensile.
+    Fornisci l'output con una tabella in formato markdown che visualizza il budget di tesoreria mensile.
     """
     
     client = anthropic.Anthropic(api_key=st.secrets["API_CLAUDE"])
@@ -56,6 +56,7 @@ for month in selected_months:
     st.subheader(f"Dati per {month}")
     
     historical_data[month] = {
+        "Cassa all'inizio del periodo": st.number_input(f"Cassa iniziale di {month}", min_value=0.0, format="%.2f", key=f"cassa_{month}"),
         "Vendite": st.number_input(f"Vendite totali per {month}", min_value=0.0, format="%.2f", key=f"vendite_{month}"),
         "Costi fissi": st.number_input(f"Costi fissi per {month}", min_value=0.0, format="%.2f", key=f"costi_fissi_{month}"),
         "Costi variabili": st.number_input(f"Costi variabili per {month}", min_value=0.0, format="%.2f", key=f"costi_variabili_{month}"),
