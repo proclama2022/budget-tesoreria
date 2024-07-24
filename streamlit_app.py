@@ -4,9 +4,6 @@ import anthropic
 import os
 from datetime import date, timedelta
 
-# Imposta la tua chiave API Anthropic
-os.environ["ANTHROPIC_API_KEY"] = "your_api_key_here"
-
 # Funzione per generare il budget di tesoreria utilizzando Claude
 def generate_treasury_budget(historical_data, assumptions, months):
     prompt = f"""
@@ -20,10 +17,10 @@ def generate_treasury_budget(historical_data, assumptions, months):
     Fornisci l'output in formato markdown con una tabella che visualizza il budget di tesoreria mensile.
     """
     
-    client = anthropic.Anthropic()
+    client = anthropic.Anthropic(api_key=st.secrets("API_CLAUDE"))
     message = client.messages.create(
-        model="claude-3-opus-20240229",
-        max_tokens=1000,
+        model="claude-3-5-sonnet-20240620",
+        max_tokens=4096,
         temperature=0,
         system="Sei un esperto finanziario specializzato nella creazione di budget di tesoreria.",
         messages=[
