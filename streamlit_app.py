@@ -19,7 +19,7 @@ def generate_treasury_budget(historical_data, assumptions, months):
     message = client.messages.create(
         model="claude-3-sonnet-20240229",
         max_tokens=4096,
-        temperature=0,
+        temperature=0.7,
         system="Sei un esperto finanziario specializzato nella creazione di budget di tesoreria.",
         messages=[
             {"role": "user", "content": prompt}
