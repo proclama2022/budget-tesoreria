@@ -26,7 +26,7 @@ def generate_treasury_budget(historical_data, assumptions, months):
         ]
     )
     
-    return message.content
+    return message.content[0].text
 
 st.title("Generatore di Budget di Tesoreria")
 
