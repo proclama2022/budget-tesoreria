@@ -3,11 +3,13 @@ import pandas as pd
 import anthropic
 from datetime import date, timedelta
 
-def generate_treasury_budget(historical_data, assumptions, months):
+def generate_treasury_budget(historical_data, assumptions, months, cassa_iniziale):
     prompt = f"""
     Basandoti sui seguenti dati storici:
     {historical_data}
     
+    Cassa iniziale: {cassa_iniziale}
+
     E sulle seguenti assunzioni:
     {assumptions}
     
@@ -56,13 +58,15 @@ for month in selected_months:
     st.subheader(f"Dati per {month}")
     
     historical_data[month] = {
-        "Cassa all'inizio del periodo": st.number_input(f"Cassa iniziale di {month}", min_value=0.0, format="%.2f", key=f"cassa_{month}"),
         "Vendite": st.number_input(f"Vendite totali per {month}", min_value=0.0, format="%.2f", key=f"vendite_{month}"),
         "Costi fissi": st.number_input(f"Costi fissi per {month}", min_value=0.0, format="%.2f", key=f"costi_fissi_{month}"),
         "Costi variabili": st.number_input(f"Costi variabili per {month}", min_value=0.0, format="%.2f", key=f"costi_variabili_{month}"),
         "Investimenti": st.number_input(f"Investimenti per {month}", min_value=0.0, format="%.2f", key=f"investimenti_{month}"),
         "Debiti": st.number_input(f"Rimborso debiti per {month}", min_value=0.0, format="%.2f", key=f"debiti_{month}"),
     }
+
+st.header("Cassa all'inizio del periodo")
+cassa_iniziale = st.number_input("Inserisci il valore della cassa all'inzio del periodo da cui iniziare a calcolare il budget:",min_value=0.0, format="%.2f")
 
 st.header("Assunzioni per le proiezioni future")
 assumptions = st.text_area("Inserisci le assunzioni per le proiezioni future:")
@@ -73,7 +77,7 @@ if st.button("Genera Budget di Tesoreria"):
     if len(selected_months) == 3 and assumptions:
         historical_data_str = "\n".join([f"{month}:\n" + "\n".join([f"  {k}: {v}" for k, v in data.items()]) for month, data in historical_data.items()])
         
-        budget_output = generate_treasury_budget(historical_data_str, assumptions, projection_months)
+        budget_output = generate_treasury_budget(historical_data_str, assumptions, projection_months, cassa_iniziale)
         
         st.markdown(budget_output)
     else:
