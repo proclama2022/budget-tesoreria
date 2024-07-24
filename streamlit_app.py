@@ -17,9 +17,9 @@ def generate_treasury_budget(historical_data, assumptions, months):
     Fornisci l'output in formato markdown con una tabella che visualizza il budget di tesoreria mensile.
     """
     
-    client = anthropic.Anthropic(api_key=st.secrets("API_CLAUDE"))
+    client = anthropic.Anthropic(api_key=st.secrets["API_CLAUDE"])
     message = client.messages.create(
-        model="claude-3-5-sonnet-20240620",
+        model="claude-3-sonnet-20240229",
         max_tokens=4096,
         temperature=0,
         system="Sei un esperto finanziario specializzato nella creazione di budget di tesoreria.",
@@ -39,12 +39,12 @@ st.header("Dati Storici")
 # Chiediamo all'utente di inserire i dati per gli ultimi 3 mesi
 months = 3
 end_date = date.today().replace(day=1) - timedelta(days=1)
-start_date = (end_date - timedelta(days=90)).replace(day=1)
+start_date = end_date - timedelta(days=2*30)  # Approssimativamente 2 mesi prima
 
 historical_data = {}
 
 for i in range(months):
-    current_date = (start_date + timedelta(days=30*i)).strftime("%B %Y")
+    current_date = (end_date - timedelta(days=30*i)).strftime("%B %Y")
     st.subheader(f"Dati per {current_date}")
     
     historical_data[current_date] = {
