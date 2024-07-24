@@ -32,22 +32,35 @@ st.title("Generatore di Budget di Tesoreria")
 
 st.header("Dati Storici")
 
-months = 3
-end_date = date.today().replace(day=1) - timedelta(days=1)
+# Lista di tutti i mesi
+all_months = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", 
+              "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
+
+# Ottieni l'anno corrente
+current_year = date.today().year
+
+# Crea una lista di opzioni per i mesi, includendo l'anno corrente e quello precedente
+month_options = [f"{month} {current_year}" for month in all_months] + [f"{month} {current_year-1}" for month in all_months]
+
+# Permetti all'utente di selezionare i 3 mesi più recenti
+selected_months = st.multiselect(
+    "Seleziona i 3 mesi più recenti per i dati storici",
+    options=month_options,
+    default=month_options[:3],  # Seleziona i primi 3 mesi come default
+    max_selections=3
+)
 
 historical_data = {}
 
-for i in range(months):
-    current_date = (end_date - timedelta(days=30*i)).replace(day=1)
-    current_date_str = current_date.strftime("%B %Y")
-    st.subheader(f"Dati per {current_date_str}")
+for month in selected_months:
+    st.subheader(f"Dati per {month}")
     
-    historical_data[current_date_str] = {
-        "Vendite": st.number_input(f"Vendite totali per {current_date_str}", min_value=0.0, format="%.2f", key=f"vendite_{i}"),
-        "Costi fissi": st.number_input(f"Costi fissi per {current_date_str}", min_value=0.0, format="%.2f", key=f"costi_fissi_{i}"),
-        "Costi variabili": st.number_input(f"Costi variabili per {current_date_str}", min_value=0.0, format="%.2f", key=f"costi_variabili_{i}"),
-        "Investimenti": st.number_input(f"Investimenti per {current_date_str}", min_value=0.0, format="%.2f", key=f"investimenti_{i}"),
-        "Debiti": st.number_input(f"Rimborso debiti per {current_date_str}", min_value=0.0, format="%.2f", key=f"debiti_{i}"),
+    historical_data[month] = {
+        "Vendite": st.number_input(f"Vendite totali per {month}", min_value=0.0, format="%.2f", key=f"vendite_{month}"),
+        "Costi fissi": st.number_input(f"Costi fissi per {month}", min_value=0.0, format="%.2f", key=f"costi_fissi_{month}"),
+        "Costi variabili": st.number_input(f"Costi variabili per {month}", min_value=0.0, format="%.2f", key=f"costi_variabili_{month}"),
+        "Investimenti": st.number_input(f"Investimenti per {month}", min_value=0.0, format="%.2f", key=f"investimenti_{month}"),
+        "Debiti": st.number_input(f"Rimborso debiti per {month}", min_value=0.0, format="%.2f", key=f"debiti_{month}"),
     }
 
 st.header("Assunzioni per le proiezioni future")
@@ -56,11 +69,11 @@ assumptions = st.text_area("Inserisci le assunzioni per le proiezioni future:")
 projection_months = st.selectbox("Seleziona il periodo di proiezione", [6, 12])
 
 if st.button("Genera Budget di Tesoreria"):
-    if historical_data and assumptions:
+    if len(selected_months) == 3 and assumptions:
         historical_data_str = "\n".join([f"{month}:\n" + "\n".join([f"  {k}: {v}" for k, v in data.items()]) for month, data in historical_data.items()])
         
         budget_output = generate_treasury_budget(historical_data_str, assumptions, projection_months)
         
         st.markdown(budget_output)
     else:
-        st.warning("Per favore, inserisci sia i dati storici che le assunzioni.")
+        st.warning("Per favore, seleziona esattamente 3 mesi e inserisci le assunzioni.")
